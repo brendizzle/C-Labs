@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 struct node_t {
     double x;
@@ -30,17 +31,24 @@ struct node_t *create_node(double n)
 
 void print_node(struct node_t *node)
 {
-    printf("Value: %f, Address: %p, Next Address: %p\n", node->x, node, node->next);
+    if (node == NULL)
+        printf("Node is null\n");
+    else
+        printf("Value: %f, Address: %p, Next Address: %p\n", node->x, node, node->next);
 }
 
 void print_list(struct node_t *head)
 {
-    struct node_t *tmp = NULL;
-    tmp = head;
-    while (tmp != NULL) {
-        print_node(tmp);
-        tmp = tmp->next;
-    }
+    if (head == NULL)
+        printf("List is empty\n");
+    else {
+        struct node_t *tmp = NULL;
+        tmp = head;
+        while (tmp != NULL) {
+            print_node(tmp);
+            tmp = tmp->next;
+        }
+    } 
 }
 
 struct node_t *insert_head(struct node_t *head, struct node_t *node)
@@ -110,6 +118,54 @@ int count_nodes(struct node_t *head)
     return count;
 }
 
+struct node_t *find_node(struct node_t *head, double n)
+{
+    struct node_t *tmp = NULL;
+    tmp = head;
+    while (tmp != NULL) {
+        if (isgreaterequal(tmp->x,n) && islessequal(tmp->x,n)) 
+            return tmp;
+
+        tmp = tmp->next;
+    }
+
+    return NULL;
+}
+
+struct node_t *delete_node(struct node_t *head, double n)
+{
+    struct node_t *prev = NULL;
+    struct node_t *curr = NULL;
+    curr = head;
+    
+    if (isgreaterequal(head->x,n) && islessequal(head->x,n)) {
+        head = curr->next;
+        free(curr);
+        return head;
+    }
+
+    while(curr != NULL) {
+        if (isgreaterequal(curr->x,n) && islessequal(curr->x,n)) {
+            prev->next = curr->next;
+            free(curr);
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    return head;
+}
+
+void delete_list(struct node_t *head)
+{
+    int n = count_nodes(head);
+    int i;
+
+    for (i = 0; i < n; i++) 
+        head = delete_node(head, head->x);
+}
+
 int main() 
 {
     struct node_t *node = NULL;
@@ -125,6 +181,17 @@ int main()
     node2 = insert_middle(node2, node4, 2);
     print_list(node2);
     printf("%d\n", count_nodes(node2));
+
+    struct node_t *found = NULL;
+    found = find_node(node2, 5);
+    print_node(found);
+
+    struct node_t *del = NULL;
+    node2 = delete_node(node2, 2);
+    print_list(node2);
+
+    delete_list(node2);
+    print_list(node2);
 
     return 0;
 }
