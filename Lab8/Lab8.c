@@ -1,4 +1,5 @@
 /* This program implements basic linked list functions */
+/* For every function where the head pointer could change, the head pointer is returned */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +18,7 @@ struct node_t *insert_tail(struct node_t *head, struct node_t *node);
 struct node_t *insert_middle(struct node_t *head, struct node_t *node, int pos);
 int count_nodes(struct node_t *head);
 struct node_t *find_node(struct node_t *head, double n);
+struct node_t *reverse_list(struct node_t *head);
 struct node_t *delete_node(struct node_t *head, double n);
 void delete_list(struct node_t *head);
 
@@ -132,6 +134,25 @@ struct node_t *find_node(struct node_t *head, double n)
     return NULL;
 }
 
+struct node_t *reverse_list(struct node_t *head)
+{
+    struct node_t *prev = NULL;
+    struct node_t *curr = NULL;
+    struct node_t *tmp = NULL;
+    tmp = head->next;
+    curr = head;
+
+    while(tmp != NULL) {
+        curr->next = prev;
+        prev = curr;
+        curr = tmp;
+        tmp = tmp->next;
+    }
+
+    curr->next = prev;
+    return curr;
+}
+
 struct node_t *delete_node(struct node_t *head, double n)
 {
     struct node_t *prev = NULL;
@@ -182,15 +203,7 @@ int main()
     print_list(node2);
     printf("%d\n", count_nodes(node2));
 
-    struct node_t *found = NULL;
-    found = find_node(node2, 5);
-    print_node(found);
-
-    struct node_t *del = NULL;
-    node2 = delete_node(node2, 2);
-    print_list(node2);
-
-    delete_list(node2);
+    node2 = reverse_list(node2);
     print_list(node2);
 
     return 0;
